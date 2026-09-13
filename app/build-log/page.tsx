@@ -16,6 +16,17 @@ interface Entry {
 
 const ENTRIES: Entry[] = [
   {
+    day: "Day 6",
+    date: "Sep 15, 2026",
+    title: "Proof it is real, on-chain",
+    points: [
+      "Added a read-only on-chain proof panel to the terminal: every watchlist token shows its real xStock mint address with a direct link to its Solscan token page.",
+      "Pulled recent transaction signatures for each mint straight from a Solana RPC node, each one linking to the transaction on Solscan, so anyone can confirm the token is genuinely trading on-chain.",
+      "Kept the safety line bright: Nocturne only reads the chain. It never signs, sends, or settles a transaction, and the portfolio stays paper-traded.",
+      "Held to the provider pattern, so a slow or rate-limited RPC falls back to a clearly labelled demo set and the panel never breaks the terminal.",
+    ],
+  },
+  {
     day: "Day 5",
     date: "Sep 14, 2026",
     title: "Open-sourced and hardened for launch",
@@ -73,7 +84,6 @@ const ENTRIES: Entry[] = [
 ];
 
 const NEXT_UP = [
-  "A single real on-chain swap of a tokenized stock, or a read-only on-chain proof with a real transaction hash.",
   "Backtest and replay mode, to see how a strategy would have played a past session.",
   "A side-by-side comparison of the conservative, balanced and aggressive presets.",
 ];

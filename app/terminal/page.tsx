@@ -19,6 +19,7 @@ import { FadeIn } from "@/components/site/FadeIn";
 import { PerfBar } from "@/components/PerfBar";
 import { MarketClock } from "@/components/MarketClock";
 import { SessionRecap } from "@/components/SessionRecap";
+import { OnchainProof } from "@/components/OnchainProof";
 import { DEFAULT_TIMEFRAME, STARTING_CASH, TIMEFRAMES, WATCHLIST } from "@/lib/config";
 import type { Strategy } from "@/lib/types";
 import { cn } from "@/lib/ui/cn";
@@ -298,6 +299,11 @@ export default function TerminalPage() {
           </GlassCard>
         </FadeIn>
       </div>
+
+      {/* Read-only on-chain proof */}
+      <FadeIn>
+        <OnchainProof />
+      </FadeIn>
     </div>
   );
 }

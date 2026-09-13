@@ -31,6 +31,23 @@ export interface Candle {
   close: number;
 }
 
+/** One real, read-only on-chain transaction touching a token mint. */
+export interface OnchainTx {
+  signature: string; // base58 transaction signature
+  slot: number; // Solana slot
+  blockTime: number | null; // epoch seconds, may be null on some nodes
+  err: boolean; // true if the transaction failed on-chain
+}
+
+/** On-chain identity and recent activity for one tokenized equity. */
+export interface TokenProof {
+  ticker: string;
+  symbol: string;
+  name: string;
+  mint: string; // real xStock mint address
+  txs: OnchainTx[]; // most recent first
+}
+
 export interface NewsItem {
   id: string;
   title: string;

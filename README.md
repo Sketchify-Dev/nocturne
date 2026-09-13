@@ -25,6 +25,7 @@ The project is built to run with zero API keys. Every external dependency (langu
 - Runs keyless. Prices, news, sentiment, and the language model all have demo fallbacks. Add a Qwen key to enable real decisions.
 - Genuinely 24/7. An external cron endpoint advances the agent even when no browser is open.
 - Risk-checked paper trading. Position and trade-size limits, confidence thresholds, and a ledger that never lets cash go negative. No real orders, no custody of funds.
+- Read-only on-chain proof. Every token links to its real xStock mint and recent Solana transactions on Solscan, so anyone can verify the assets are genuine. Nocturne only reads the chain; it never signs or sends an order.
 - Strategy presets. Conservative, balanced, and aggressive profiles adjust risk limits and the prompt's tone.
 - Production dashboard. A live terminal with an equity curve, positions, signals, a price ticker, and the decision feed.
 
@@ -48,6 +49,7 @@ Each concern has a live provider and a demo fallback:
 | --- | --- | --- |
 | Decisions | Qwen (DashScope, OpenAI-compatible) | rule-based mock |
 | Prices | DexScreener (xStock token mints on Solana) | recorded demo series |
+| On-chain proof | Solana JSON-RPC (read-only signatures) | labelled demo set |
 | News | finance headlines | recorded demo headlines |
 | Sentiment | derived from headlines | demo scores |
 | Persistence | Upstash Redis (REST) | in-memory or local file |
@@ -101,6 +103,7 @@ Every variable is optional. Without them, the app runs in demo mode.
 | `QWEN_API_KEY` | Enables live decisions through Qwen. |
 | `QWEN_BASE_URL` | OpenAI-compatible endpoint. Defaults to DashScope International. |
 | `QWEN_MODEL` | Model name. Defaults to `qwen-plus`. |
+| `SOLANA_RPC_URL` | Solana JSON-RPC endpoint for the read-only on-chain proof. Defaults to the public mainnet node. |
 | `CRON_SECRET` | Shared secret required by the cron endpoint. |
 | `UPSTASH_REDIS_REST_URL` | Upstash REST URL for production persistence. |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash REST token. |
