@@ -27,6 +27,9 @@ export function Footer() {
             <Link href="/build-log" className="text-muted transition hover:text-ink">
               Build log
             </Link>
+            <Link href="/log" className="text-muted transition hover:text-ink">
+              Paper-trading log
+            </Link>
             <a
               href={GITHUB_URL}
               target="_blank"
