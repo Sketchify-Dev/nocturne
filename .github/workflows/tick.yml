@@ -1,0 +1,38 @@
+# Keeps Nocturne ticking 24/7 by pinging the authenticated cron endpoint on a
+# schedule. GitHub runs this from its own infrastructure, so the agent keeps
+# trading even with every local machine and browser closed.
+name: Nocturne tick
+
+on:
+  schedule:
+    # Every 5 minutes. GitHub may batch scheduled runs under load, so the real
+    # cadence can stretch to 10-20 minutes; that is still continuous operation.
+    - cron: "*/5 * * * *"
+  # Lets you fire a tick by hand from the Actions tab.
+  workflow_dispatch: {}
+
+# Never let two ticks overlap, and never cancel one that is mid-flight.
+concurrency:
+  group: nocturne-tick
+  cancel-in-progress: false
+
+# The job only calls an external URL, so it needs no access to the repo.
+permissions: {}
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the tick endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          code=$(curl -sS -m 60 -o response.txt -w "%{http_code}" \
+            "https://nocturne-coral-phi.vercel.app/api/cron/tick?secret=${CRON_SECRET}")
+          echo "HTTP ${code}"
+          cat response.txt
+          echo
+          if [ "${code}" != "200" ]; then
+            echo "Tick failed: expected HTTP 200, got ${code}"
+            exit 1
+          fi
