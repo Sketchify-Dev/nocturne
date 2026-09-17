@@ -27,7 +27,7 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          code=$(curl -sS -m 60 -o response.txt -w "%{http_code}" \
+          code=$(curl -sS --connect-timeout 15 -m 120 -o response.txt -w "%{http_code}" \
             "https://nocturne-coral-phi.vercel.app/api/cron/tick?secret=${CRON_SECRET}")
           echo "HTTP ${code}"
           cat response.txt

@@ -83,6 +83,11 @@ function client(): OpenAI {
       baseURL:
         process.env.QWEN_BASE_URL ||
         "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+      // Bound every call so a slow gateway can never hang a tick: give up after
+      // 45s and do not retry, so decide() falls back to the rule-based decision
+      // instead of leaving the request open until the platform kills it.
+      timeout: 45_000,
+      maxRetries: 0,
     });
   }
   return cached;
@@ -93,6 +98,9 @@ async function decideLive(input: DecideInput): Promise<AgentDecision> {
     model: process.env.QWEN_MODEL || "qwen-plus",
     messages: buildMessages(input) as unknown as ChatCompletionMessageParam[],
     temperature: 0.7,
+    // A market view plus six short rationales fits comfortably; capping output
+    // keeps generation fast and bounds cost.
+    max_tokens: 1500,
     response_format: { type: "json_object" },
   });
   const text = res.choices[0]?.message?.content ?? "";

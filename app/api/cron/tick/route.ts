@@ -4,6 +4,10 @@ import { tick } from "@/lib/agent/engine";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Give the tick room to gather signals and get a model decision before Vercel
+// times out the function. The model call itself is bounded to 45s in qwen.ts,
+// so a tick returns well inside this limit.
+export const maxDuration = 60;
 
 /**
  * External-cron entrypoint for genuine 24/7 ticking. Point a scheduler
