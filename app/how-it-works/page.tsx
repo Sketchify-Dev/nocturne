@@ -71,7 +71,7 @@ const STACK = [
   "Tailwind CSS",
   "Framer Motion",
   "lightweight-charts",
-  "Qwen (DashScope)",
+  "Qwen (Bitget gateway)",
   "TanStack Query",
   "Zod",
 ];

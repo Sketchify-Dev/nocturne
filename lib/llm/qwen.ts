@@ -73,7 +73,7 @@ function parseDecision(text: string, input: DecideInput): AgentDecision {
   return { marketView: (parsed.data.marketView || "").slice(0, 600), decisions };
 }
 
-// ── Live provider (Qwen via DashScope, OpenAI-compatible) ────────────────────
+// ── Live provider (Qwen via the Bitget hackathon gateway, OpenAI-compatible) ────────────────────
 
 let cached: OpenAI | null = null;
 function client(): OpenAI {
@@ -82,7 +82,7 @@ function client(): OpenAI {
       apiKey: process.env.QWEN_API_KEY,
       baseURL:
         process.env.QWEN_BASE_URL ||
-        "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "https://hackathon.bitgetops.com/v1",
       // Bound every call so a slow gateway can never hang a tick: give up after
       // 45s and do not retry, so decide() falls back to the rule-based decision
       // instead of leaving the request open until the platform kills it.
@@ -95,7 +95,7 @@ function client(): OpenAI {
 
 async function decideLive(input: DecideInput): Promise<AgentDecision> {
   const res = await client().chat.completions.create({
-    model: process.env.QWEN_MODEL || "qwen-plus",
+    model: process.env.QWEN_MODEL || "qwen3.8-max",
     messages: buildMessages(input) as unknown as ChatCompletionMessageParam[],
     temperature: 0.7,
     // A market view plus six short rationales fits comfortably; capping output

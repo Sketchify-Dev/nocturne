@@ -104,9 +104,9 @@ Copy the line it prints. That is your `CRON_SECRET`. Keep it handy.
 
   | Name | Value |
   |------|-------|
-  | `QWEN_API_KEY` | your DashScope key |
-  | `QWEN_BASE_URL` | `https://dashscope-intl.aliyuncs.com/compatible-mode/v1` |
-  | `QWEN_MODEL` | `qwen-plus` |
+  | `QWEN_API_KEY` | your Bitget hackathon Qwen key |
+  | `QWEN_BASE_URL` | `https://hackathon.bitgetops.com/v1` |
+  | `QWEN_MODEL` | `qwen3.8-max` |
 
 - Click **Deploy** and wait for it to finish.
 - Click the deployment; note your public URL, e.g. `https://nocturne-xxx.vercel.app`.

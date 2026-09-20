@@ -48,7 +48,7 @@ Each concern has a live provider and a demo fallback:
 
 | Concern | Live provider | Fallback |
 | --- | --- | --- |
-| Decisions | Qwen (DashScope, OpenAI-compatible) | rule-based mock |
+| Decisions | Qwen (Bitget hackathon gateway, OpenAI-compatible) | rule-based mock |
 | Prices | DexScreener (xStock token mints on Solana) | recorded demo series |
 | On-chain proof | Solana JSON-RPC (read-only signatures) | labelled demo set |
 | News | finance headlines | recorded demo headlines |
@@ -81,8 +81,8 @@ Set your key in `.env.local`:
 
 ```env
 QWEN_API_KEY=sk-...
-QWEN_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
-QWEN_MODEL=qwen-plus
+QWEN_BASE_URL=https://hackathon.bitgetops.com/v1
+QWEN_MODEL=qwen3.8-max
 ```
 
 Restart the dev server. Decisions in the feed are then tagged as live rather than demo. If a live call fails, Nocturne falls back to demo mode so the interface keeps running.
@@ -104,8 +104,8 @@ Every variable is optional. Without them, the app runs in demo mode.
 | Variable | Purpose |
 | --- | --- |
 | `QWEN_API_KEY` | Enables live decisions through Qwen. |
-| `QWEN_BASE_URL` | OpenAI-compatible endpoint. Defaults to DashScope International. |
-| `QWEN_MODEL` | Model name. Defaults to `qwen-plus`. |
+| `QWEN_BASE_URL` | OpenAI-compatible endpoint. Defaults to the Bitget hackathon gateway. |
+| `QWEN_MODEL` | Model name. Defaults to `qwen3.8-max`. |
 | `SOLANA_RPC_URL` | Solana JSON-RPC endpoint for the read-only on-chain proof. Defaults to the public mainnet node. |
 | `CRON_SECRET` | Shared secret required by the cron endpoint. |
 | `UPSTASH_REDIS_REST_URL` | Upstash REST URL for production persistence. |
