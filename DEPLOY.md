@@ -4,14 +4,14 @@ This gets Nocturne live at a public URL where the agent keeps ticking around the
 clock, even when nobody has the tab open. That "it runs while you sleep" property
 is the whole premise, so it is worth doing once, carefully.
 
-You need four free accounts. All have a free tier that is plenty for this:
+You need three free accounts. All have a free tier that is plenty for this:
 
-1. **GitHub** - hosts the code (also doubles as a build-in-public artifact).
+1. **GitHub** - hosts the code (also doubles as a build-in-public artifact) and
+   runs the 24/7 scheduler for free through GitHub Actions, which is already
+   configured in this repo.
 2. **Vercel** - hosts the live app. Signs in with your GitHub account.
 3. **Upstash** - a tiny Redis database so the agent remembers its portfolio
    between ticks in production. Signs in with GitHub too.
-4. **cron-job.org** - a free scheduler that pings the agent every minute so it
-   keeps trading when no browser is open.
 
 You do not need any of these to run locally, and you do not need a Qwen key yet.
 Without keys the app runs in demo mode; keys switch on the real providers later.
@@ -115,26 +115,34 @@ Copy the line it prints. That is your `CRON_SECRET`. Keep it handy.
 
 ---
 
-## Step 5 - Schedule the 24/7 tick
+## Step 5 - Turn on the 24/7 tick (GitHub Actions)
 
-- Go to https://console.cron-job.org and sign in (create a free account).
-- Click **Create cronjob**.
-- Title: `Nocturne tick`
-- URL: your app URL plus the cron path and secret:
+This repo already includes the scheduler at `.github/workflows/tick.yml`. It
+pings your tick endpoint on a schedule from GitHub's own infrastructure, so the
+agent keeps trading with no browser open. You just need to give it the secret.
 
-  ```
-  https://nocturne-xxx.vercel.app/api/cron/tick?secret=PASTE_YOUR_CRON_SECRET
-  ```
+- On GitHub, open your `nocturne` repo -> **Settings** -> **Secrets and
+  variables** -> **Actions**.
+- Click **New repository secret**.
+  - Name: `CRON_SECRET`
+  - Value: the same secret string from Step 3. It must match the one in Vercel
+    exactly.
+- Click **Add secret**.
+- Open the **Actions** tab. If Actions are not enabled yet, click to enable them.
+- In the left sidebar select **Nocturne tick**, click **Run workflow**, and
+  confirm the run goes green. Green means it returned `200` and advanced the
+  agent by one tick.
 
-  (use the same secret from Step 3)
-- Schedule: **Every 1 minute** (in the "Every" tab, choose every minute).
-- Save.
-- On the cronjob's page click **Run now** (or **Test run**). You should get a
-  `200` response whose body looks like `{"ok":true,"tick":1,...}`. Each run
-  advances the agent by one tick.
+That is it. GitHub now runs it on its own schedule (about every 5 minutes;
+GitHub may batch scheduled runs under load, so the real cadence can stretch,
+which is still continuous operation), and the dashboard advances it faster
+(throttled to a sane rate) whenever someone is watching.
 
-That is it. The agent now ticks every minute forever, and faster (throttled to a
-sane rate) whenever someone is watching the dashboard.
+> Prefer a different scheduler? Any service that can make an HTTPS request on a
+> timer works: point it at
+> `https://nocturne-xxx.vercel.app/api/cron/tick?secret=PASTE_YOUR_CRON_SECRET`
+> (the same secret from Step 3). GitHub Actions is the default here because it
+> needs no extra account and lives in the repo.
 
 ---
 
@@ -144,8 +152,9 @@ sane rate) whenever someone is watching the dashboard.
   tab entirely**.
 - Wait a few minutes.
 - Reopen the URL. The tick count has gone up while you were away, and the "while
-  you were away" recap greets you with what the agent did. That is the cron
-  doing its job with no browser open.
+  you were away" recap greets you with what the agent did. That is GitHub Actions
+  doing its job with no browser open. You can also watch the runs pile up under
+  the repo's **Actions** tab.
 
 ---
 
@@ -167,8 +176,14 @@ latest one -> the "..." menu -> **Redeploy**.
 
 ## Troubleshooting
 
-- **Cron returns 401 `unauthorized`**: the `?secret=` in the cron URL does not
-  match the `CRON_SECRET` env var in Vercel. Make them identical, then redeploy.
+- **The tick returns 401 `unauthorized`**: the `CRON_SECRET` GitHub repository
+  secret (or the `?secret=` in a custom scheduler's URL) does not match the
+  `CRON_SECRET` env var in Vercel. Make them identical, then redeploy Vercel.
+- **The GitHub Actions run is red with `curl ... timed out`**: a tick took
+  longer than the workflow's wait. The model call is bounded in code (it gives up
+  after 45 seconds and falls back), so a one-off red run is usually a slow cold
+  start; re-run it. If it persists, check the Vercel function logs for
+  `/api/cron/tick`.
 - **Cron returns `{"ok":true,"skipped":true}`**: the agent is paused. Open the
   dashboard and press **Start** (that flips the shared state to running), or
   just reset it. New deployments seed a fresh state that is already running.
@@ -183,7 +198,7 @@ latest one -> the "..." menu -> **Redeploy**.
 
 ## What costs money here?
 
-Nothing, at this scale. GitHub, Vercel Hobby, Upstash free, and cron-job.org
-free all cover this comfortably. The only thing that eventually costs anything is
-the Qwen API once you add a real key, and the tick throttle keeps that bounded
-even during a busy voting period.
+Nothing, at this scale. GitHub (Actions minutes are free on public repos),
+Vercel Hobby, and Upstash free all cover this comfortably. The only thing that
+eventually costs anything is the Qwen API once you add a real key, and the tick
+throttle keeps that bounded even during a busy voting period.

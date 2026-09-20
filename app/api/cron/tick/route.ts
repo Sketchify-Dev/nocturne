@@ -10,8 +10,9 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * External-cron entrypoint for genuine 24/7 ticking. Point a scheduler
- * (e.g. cron-job.org) at this URL. If CRON_SECRET is set, require ?secret=...
+ * External-cron entrypoint for genuine 24/7 ticking. The included GitHub Actions
+ * workflow (.github/workflows/tick.yml) pings this on a schedule; any external
+ * scheduler pointed at this URL works too. If CRON_SECRET is set, require ?secret=...
  */
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;

@@ -16,6 +16,27 @@ interface Entry {
 
 const ENTRIES: Entry[] = [
   {
+    day: "Day 10",
+    date: "Sep 19, 2026",
+    title: "Made always-on actually mean it",
+    points: [
+      "Caught the external minute-scheduler failing quietly: it was timing out on its own side while each tick finished on the server, so it throttled itself and left a multi-hour gap in the record overnight.",
+      "Moved scheduling into the repo as a GitHub Actions workflow that pings the tick endpoint on a fixed cadence from GitHub's own infrastructure, so the agent keeps trading with every local machine and browser closed, and any failed tick shows up red instead of silently vanishing.",
+      "Bounded the model call so a slow gateway can never hang a tick: a 45-second timeout with no retries, after which the agent falls back to its transparent rule-based decision, plus a hard time limit on the endpoint itself.",
+      "Confirmed it end to end and let it run: scheduled ticks return a clean 200 with the portfolio advancing and trades executing on GitHub's clock, untouched, through today.",
+    ],
+  },
+  {
+    day: "Day 7",
+    date: "Sep 16, 2026",
+    title: "A public, verifiable track record",
+    points: [
+      "Published a read-only paper-trading log at /log: every executed trade with its UTC timestamp, instrument, direction, price, size, notional, cash impact, running balance, and realized P&L, open to anyone with no login.",
+      "Added one-click CSV export of the full history, so the record can be audited or analyzed outside the app.",
+      "Linked it from the footer, so the run record is one click from anywhere on the site.",
+    ],
+  },
+  {
     day: "Day 6",
     date: "Sep 15, 2026",
     title: "Proof it is real, on-chain",

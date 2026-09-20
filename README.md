@@ -23,7 +23,8 @@ The project is built to run with zero API keys. Every external dependency (langu
 
 - Streaming, explainable decisions. Each tick records the model's market view and a per-ticker rationale, not just an action.
 - Runs keyless. Prices, news, sentiment, and the language model all have demo fallbacks. Add a Qwen key to enable real decisions.
-- Genuinely 24/7. An external cron endpoint advances the agent even when no browser is open.
+- Genuinely 24/7. A GitHub Actions workflow in the repo pings the tick endpoint on a schedule from GitHub's own infrastructure, so the agent keeps trading with every browser closed. Any external scheduler pointed at the same endpoint works too.
+- Public, verifiable run log. A read-only `/log` page and `/api/log` endpoint list every executed paper trade, with a one-click CSV export and no login required.
 - Risk-checked paper trading. Position and trade-size limits, confidence thresholds, and a ledger that never lets cash go negative. No real orders, no custody of funds.
 - Read-only on-chain proof. Every token links to its real xStock mint and recent Solana transactions on Solscan, so anyone can verify the assets are genuine. Nocturne only reads the chain; it never signs or sends an order.
 - Strategy presets. Conservative, balanced, and aggressive profiles adjust risk limits and the prompt's tone.
@@ -88,7 +89,9 @@ Restart the dev server. Decisions in the feed are then tagged as live rather tha
 
 ### 24/7 background ticking
 
-The dashboard advances the agent while it is open. For around-the-clock operation, point any scheduler (for example cron-job.org) at:
+The dashboard advances the agent while it is open. For around-the-clock operation, this repo includes a GitHub Actions workflow at `.github/workflows/tick.yml` that pings the tick endpoint on a schedule from GitHub's own infrastructure. Add your `CRON_SECRET` as a repository secret (Settings, then Secrets and variables, then Actions) and it runs on its own; you can also trigger it by hand from the Actions tab.
+
+Any external scheduler works too. Point it at:
 
 ```
 GET https://<your-deployment>/api/cron/tick?secret=<CRON_SECRET>
@@ -111,27 +114,31 @@ Every variable is optional. Without them, the app runs in demo mode.
 
 ## Deployment
 
-The app deploys to Vercel, with persistence on Upstash Redis and 24/7 ticking driven by an external scheduler. A complete, step-by-step walkthrough is in [DEPLOY.md](./DEPLOY.md).
+The app deploys to Vercel, with persistence on Upstash Redis and 24/7 ticking driven by the GitHub Actions workflow included in the repo (any external scheduler works too). A complete, step-by-step walkthrough is in [DEPLOY.md](./DEPLOY.md).
 
 ## Project structure
 
 ```
+.github/workflows/tick.yml scheduled 24/7 tick (GitHub Actions)
 app/
   page.tsx                 landing page
   terminal/page.tsx        live trading terminal
   how-it-works/page.tsx    agent design and safety
   build-log/page.tsx       build-in-public log
+  log/page.tsx             public read-only paper-trading log
   api/agent/state          GET current state
   api/agent/tick           POST advance one tick
   api/agent/control        POST start / pause / reset / configure
   api/market/candles       GET OHLC candles for a ticker
   api/cron/tick            GET external-cron entrypoint
+  api/log                  GET public paper-trading log (JSON or CSV)
 components/                UI: Hero, Globe, EquityChart, DecisionFeed, and more
 lib/
   agent/engine.ts          the tick loop
   agent/prompt.ts          strategy-aware prompt builder
   llm/qwen.ts              Qwen provider and rule-based mock
   data/                    prices, news, and sentiment providers
+  log/paperLog.ts          builds the public trade log from state
   portfolio/ledger.ts      trades, positions, P&L, risk limits
   store/state.ts           persistence (Redis, file, or memory)
 ```
