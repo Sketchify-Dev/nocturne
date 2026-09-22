@@ -27,6 +27,28 @@ const ENTRIES: Entry[] = [
     ],
   },
   {
+    day: "Day 9",
+    date: "Sep 18, 2026",
+    title: "Hardened the pipeline, polished the demo",
+    points: [
+      "Made the decision pipeline tolerant by design: every model response is validated against a strict schema, clamped to sane ranges, and stripped of unknown tickers and low-confidence noise. If a reply still will not parse, the transparent rule-based decision takes over, so a malformed answer can never reach the ledger.",
+      "Did an accessibility and mobile pass: the terminal now reads cleanly on a phone, holds its contrast, and honors reduced-motion for anyone who asks for less animation.",
+      "Filled out the How it works page with the exact JSON schema a decision must satisfy and the guardrails around it, so the reasoning is legible to a judge instead of a black box.",
+      "Tuned the first load: faster paint, sensible empty and error states, and the value line tightened to one sentence, so the demo lands in the first few seconds.",
+    ],
+  },
+  {
+    day: "Day 8",
+    date: "Sep 17, 2026",
+    title: "Strategy presets, hard limits",
+    points: [
+      "Shipped three strategy presets, conservative, balanced and aggressive, where one switch changes both the risk limits and the tone of the prompt the model reasons with.",
+      "Enforced those limits in code before anything reaches the ledger: a cap on exposure per name, a cap on size per trade, and a minimum-confidence gate that drops timid calls instead of trading them.",
+      "Kept one rule absolute across every preset: cash can never go negative, so the agent can never commit money it does not hold.",
+      "Added start, pause, reset and configure controls to the terminal, so the running agent can be steered live without a redeploy.",
+    ],
+  },
+  {
     day: "Day 7",
     date: "Sep 16, 2026",
     title: "A public, verifiable track record",
